@@ -80,6 +80,10 @@ public final class UserInterface {
         JButton save_button = new JButton("Save Chat");
         JButton open_chat_button = new JButton("Open Chat");
         JButton summary_button = new JButton("Summarize");
+        JButton quit_button = new JButton("Quit");
+        quit_button.addActionListener(e -> System.exit(0));
+        button_panel.add(quit_button);
+
 
         button_panel.add(clear_button);
         button_panel.add(save_button);
@@ -102,8 +106,34 @@ public final class UserInterface {
         user_input_panel.add(user_text_area);
         user_input_panel.add(send_button);
 
+        JLabel charCounter = createCharCounter(user_text_area);
+        user_input_panel.add(charCounter);
+
+
         return user_input_panel;
     }
+    public JLabel createCharCounter(JTextArea userTextArea) {
+        JLabel charCountLabel = new JLabel("Characters: 0");
+    
+        userTextArea.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                updateCount();
+            }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                updateCount();
+            }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                updateCount();
+            }
+    
+            private void updateCount() {
+                charCountLabel.setText("Characters: " + userTextArea.getText().length());
+            }
+        });
+    
+        return charCountLabel;
+    }
+    
 
     public void sendMessage(JTextArea chat, JTextArea user_message) {
         String message = user_message.getText();
