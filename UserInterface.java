@@ -1,10 +1,11 @@
 import java.awt.*;
 import javax.swing.*;
 
-public class UserInterface {
+public final class UserInterface {
 
-    private JFrame window;
-    private GridBagConstraints gbc;
+    private final JFrame window;
+    private final GridBagConstraints gbc;
+    private JTextArea chat;
     
     public UserInterface() {
         this.window = new JFrame("Chatbot");
@@ -15,17 +16,25 @@ public class UserInterface {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        JLabel welcome_label = new JLabel("Welcome to the Chatbot");
-        welcome_label.setFont(new Font("Serif", Font.BOLD, 20)); 
-        window.add(welcome_label, gbc);
+        window.add(createWelcomeLavel(), gbc);
 
         gbc.gridy = 1;
-        JButton start_button = new JButton("Start Chatting");
-        start_button.addActionListener(e -> setChat());
-        window.add(start_button, gbc);
+        window.add(createStartButton(), gbc);
 
         window.setLocationRelativeTo(null);
         window.setVisible(true);
+    }
+
+    public JLabel createWelcomeLavel() {
+        JLabel welcome_label = new JLabel("Welcome to the Chatbot");
+        welcome_label.setFont(new Font("Serif", Font.BOLD, 20)); 
+        return welcome_label;
+    }
+
+    public JButton createStartButton() {
+        JButton start_button = new JButton("Start Chatting");
+        start_button.addActionListener(e -> setChat());
+        return start_button;
     }
 
     public void setChat() {
@@ -33,7 +42,23 @@ public class UserInterface {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
+
+        window.add(createChatArea());
+
+        gbc.gridy = 1;
+        window.add(createUserInputArea(), gbc);
+        
+        window.revalidate();
+        window.repaint();
+    }
+
+    public JPanel createChatArea() {
+        JPanel chat_area = new JPanel();
+        chat_area.setLayout(new BoxLayout(chat_area, BoxLayout.X_AXIS));
+        chat_area.add(createButtons());
+
         JTextArea text_area = new JTextArea(20, 30);
+        this.chat = text_area;
         text_area.setLineWrap(true);
         text_area.setWrapStyleWord(true);
         text_area.setEditable(false);
@@ -41,29 +66,51 @@ public class UserInterface {
 
         JScrollPane scroll_pane = new JScrollPane(text_area);
         scroll_pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        window.add(scroll_pane);
 
-        gbc.gridy = 1;
+        chat_area.add(scroll_pane);
+        
+        return chat_area;
+    }
+
+    public JPanel createButtons() {
+        JPanel button_panel = new JPanel();
+        button_panel.setLayout(new BoxLayout(button_panel, BoxLayout.Y_AXIS));
+
+        JButton clear_button = new JButton("Clear Chat");
+        JButton save_button = new JButton("Save Chat");
+        JButton open_chat_button = new JButton("Open Chat");
+        JButton summary_button = new JButton("Summarize");
+
+        button_panel.add(clear_button);
+        button_panel.add(save_button);
+        button_panel.add(open_chat_button);
+        button_panel.add(summary_button);
+
+        return button_panel;
+    }
+
+    public JPanel createUserInputArea() {
         JPanel user_input_panel = new JPanel();
         JTextArea user_text_area = new JTextArea(3, 20);
         user_text_area.setLineWrap(true);
         user_text_area.setWrapStyleWord(true);
+
         JButton send_button = new JButton("Send");
-        send_button.addActionListener(e -> {sendMessage(text_area, user_text_area);
-                                            sendChatBotMessage(text_area);});
+        send_button.addActionListener(e -> {sendMessage(chat, user_text_area);
+                                            sendChatBotMessage(chat);});
 
         user_input_panel.add(user_text_area);
         user_input_panel.add(send_button);
-        window.add(user_input_panel, gbc);
-        
-        window.revalidate();
-        window.repaint();
+
+        return user_input_panel;
     }
 
     public void sendMessage(JTextArea chat, JTextArea user_message) {
         String message = user_message.getText();
-        chat.append("USER: " + message + "\n");
-        user_message.setText("");
+        if (!(message.equals(""))) {
+            chat.append("USER: " + message + "\n");
+            user_message.setText("");
+        }
     }
 
     public void sendChatBotMessage(JTextArea chat) {
