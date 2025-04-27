@@ -10,6 +10,8 @@ repositories {
     mavenCentral()
 }
 
+implementation 'com.theokanning.openai:openai-java:2.0.0'
+
 dependencies {
     implementation 'org.json:json:20240303'
 }
