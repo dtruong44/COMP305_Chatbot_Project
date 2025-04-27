@@ -17,7 +17,7 @@ public class ChatbotEngine {
 
     public static void main(String[] args) throws Exception {
 
-        apiKey = loadEnv("");
+        apiKey = loadEnv("APIKEY.env");
 
         System.out.println(createResponse("how many turtles in ocean?"));
 
